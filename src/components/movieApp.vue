@@ -165,6 +165,7 @@ export default {
                 this.PAGE_CURRENT = page
                 console.log(this.PAGE_CURRENT);
                 this.getMovies(this.URL_CURRENT, this.PAGE_CURRENT)
+                
             }
         },
         lastPage(page) {

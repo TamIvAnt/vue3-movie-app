@@ -76,7 +76,8 @@
         </div>
     </div>
 
-    <div class="pagination_box mobile">
+    <div class="pagination_box mobile"
+    :class="{none: respPageCount == 0}">
         <button 
         class="lang"
         :class='{disabled: PAGE_CURRENT==1}'
@@ -342,6 +343,10 @@ export default {
         margin-left: auto;
         margin-right: auto;
     }
+    .pagination_box.none {
+        display: none;
+    }
+
     .lang {
         display: inline-block;	
         box-sizing: border-box;
@@ -377,6 +382,7 @@ export default {
         align-items: center;
         text-align: center;
     }
+    
     .mobile {
         display: none;
         max-width: 200px;

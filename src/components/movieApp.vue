@@ -76,7 +76,7 @@
         </div>
     </div>
 
-    <div class="pagination_box">
+    <div class="pagination_box mobile">
         <button 
         class="lang"
         :class='{disabled: PAGE_CURRENT==1}'
@@ -92,6 +92,18 @@
         @click="nextPage(PAGE_CURRENT)">
             &rang;
         </button>
+    </div>
+    <div class="pagination_box desctop">
+        <button 
+        class="btn"
+        v-for="item of respPageCount"
+        :key="item"
+        :class='{active: item==PAGE_CURRENT}'
+        @click="PAGE_CURRENT = item ,getMovies(URL_CURRENT, PAGE_CURRENT)">
+            {{item}}
+        </button>
+        
+        
     </div>
 </template>
 
@@ -327,8 +339,6 @@ export default {
         display: flex;
         justify-content: space-between;
 
-        max-width: 200px;
-
         margin-left: auto;
         margin-right: auto;
     }
@@ -366,5 +376,27 @@ export default {
     .pagination_box__txt {
         align-items: center;
         text-align: center;
+    }
+    .mobile {
+        display: none;
+        max-width: 200px;
+    }
+    .desctop {
+        display: none;
+        width: fit-content;
+    }
+
+    @media (min-width: 1024px) {
+        .desctop {
+            display: flex;
+        }
+    }
+    @media (max-width: 768px) {
+        .desctop {
+            display: none;
+        }
+        .mobile {
+            display: flex;
+        }
     }
 </style>

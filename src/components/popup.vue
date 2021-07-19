@@ -29,7 +29,7 @@
                     <p>
                         <span class="popup_body_span"> Рейтинг </span>:&nbsp; {{CURRENT_RATING}}
                     </p>
-                    <p :class="{show: popUp_Data.filmLength !=  null, none: popUp_Data.filmLength ==  null }">
+                    <p :class="{show: popUp_Data.type == 'FILM', none: popUp_Data.type == 'TV_SHOW' || popUp_Data.type == 'TV_SERIES' }">
                         <span class="popup_body_span"> Хронометраж </span>:&nbsp; {{popUp_Data.filmLength}}
                     </p>
                     <p :class="{show: popUp_Data.type == 'TV_SHOW' || popUp_Data.type == 'TV_SERIES', none: popUp_Data.type == 'FILM' }">

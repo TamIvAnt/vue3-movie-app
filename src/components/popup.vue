@@ -38,7 +38,7 @@
 
                     <div class="popup_body__trailer">
                         <p> <span class="popup_body_span">Трейлер</span>:&nbsp;&nbsp;  </p>
-                        <iframe width="560" 
+                        <iframe width="100%" 
                         height="315" 
                         :src="'https://www.youtube.com/embed/'+URL_TRAILER_SIMBOL"
                         title="YouTube video player" 

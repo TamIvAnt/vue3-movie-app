@@ -39,10 +39,9 @@
         </button>
     </div>
 
-    <h2 
-    class="top_text"
-    v-if="topName == 'ОЖИДАЕМЫЕ' || topName == 'ТОП 250' || topName == 'ТОП 100'">
-        
+    
+    <h2 class="top_text"
+    v-if="topName == 'ОЖИДАЕМЫЕ' || topName == 'ТОП 250' || topName == 'ТОП 100'">  
     </h2>
     <h2 class="top_text" 
     v-else-if="respData.length == 0">
@@ -51,8 +50,24 @@
     <h2 v-else class="top_text">По запросу:&nbsp; {{topName}}</h2>
 
     <div class="container">
-        <div class="card" v-for="item of respData" :key="item.filmId">
-            <div class="card__img__inner">
+        <popup @close="closePopup" 
+            :SHOWPOPUP="SHOWPOPUP" 
+            :popUp_Data="popUp_Data" 
+            :FILMID="FILMID" 
+            :CURRENT_RATING="CURRENT_RATING"
+            :trailersData="trailersData"
+            :URL_TRAILER_SIMBOL="URL_TRAILER_SIMBOL"
+        />
+
+        <div class="card" 
+        v-for="item of respData" :key="item.filmId"
+        >
+            <div class="card__img__inner"
+            @click=" FILMID = item.filmId, 
+            CURRENT_RATING = item.rating,
+            getMoviesForId(API_URL_SEARCH_MOVIE_ID, FILMID), 
+            showPopup()"
+            >
                 <div class="card__img__dark"></div>
                 <img class="card__img" :src="item.posterUrlPreview" :alt="item.nameRu">
             </div>
@@ -115,6 +130,9 @@ import {API_URL_TOP_250} from '../data/data.js'
 import {API_URL_TOP_100} from '../data/data.js'
 import {API_URL_AWAIT} from '../data/data.js'
 import {API_URL_SEARCH} from '../data/data.js'
+import {API_URL_TRAILER} from '../data/data.js'
+import {API_URL_SEARCH_MOVIE_ID} from '../data/data.js'
+import popup from './popup.vue'
 
 export default {
     data() {
@@ -124,16 +142,27 @@ export default {
             API_URL_TOP_100: API_URL_TOP_100,
             API_URL_AWAIT: API_URL_AWAIT,
             API_URL_SEARCH: API_URL_SEARCH,
+            API_URL_TRAILER: API_URL_TRAILER,
+            API_URL_SEARCH_MOVIE_ID: API_URL_SEARCH_MOVIE_ID,
             URL_CURRENT: '',
             PAGE_CURRENT: 1,
             NAME_CATIGORY_NAME_CURRENT: '100',
             respData: {},
+            popUp_Data: {},
+            trailersData: [],
             respPageCount: 0,
             myPlaceholder: 'Поиск',
             search: '',
             searchSave: '',
             topName: 'ТОП 100',
+            SHOWPOPUP: false,
+            FILMID: 0,
+            CURRENT_RATING: '',
+            URL_TRAILER_SIMBOL: '',
         }
+    },
+    components: {
+        popup
     },
     methods: {
         async getMovies(url, page) {
@@ -170,13 +199,51 @@ export default {
 
             window.scrollTo(0, 0)
         },
+        async getMoviesForId(url, id) {
+            url += id
+            const resp = await fetch(url, {
+                headers: {
+                    "Content-Type": "aplication/json",
+                    "X-API-KEY": API_KEY,
+                }
+            })
+            const respData = await resp.json()
+            this.popUp_Data = respData.data
+            // console.log(this.popUp_Data.filmLength);
+            this.showPopup()
+            this.getTrailer(API_URL_TRAILER, id)
+        },
+        async getTrailer(url, id) {
+            url = url + id + '/videos'
+            const resp = await fetch(url, {
+                headers: {
+                    "Content-Type": "aplication/json",
+                    "X-API-KEY": API_KEY,
+                }
+            })
+            const respData = await resp.json()
+            this.trailersData = respData.trailers
+            let link = respData.trailers[0].url
+            if (link.length == 43) {
+                link = respData.trailers[0].url
+                link = link.substring(32)
+                this.URL_TRAILER_SIMBOL = link
+                // console.log(this.URL_TRAILER_SIMBOL);
+            } else {
+                link = link.substring(17)
+                this.URL_TRAILER_SIMBOL = link
+                // console.log(this.URL_TRAILER_SIMBOL);
+            }
+            
+            // console.log(respData.trailers);
+        },
         nextPage(page) {
             if (page >= this.respPageCount) {
                 return
             } else {
                 page++ 
                 this.PAGE_CURRENT = page
-                console.log(this.PAGE_CURRENT);
+                // console.log(this.PAGE_CURRENT);
                 this.getMovies(this.URL_CURRENT, this.PAGE_CURRENT)
                 
             }
@@ -187,10 +254,22 @@ export default {
             } else {
                 page--
                 this.PAGE_CURRENT = page
-                console.log(this.PAGE_CURRENT);
+                // console.log(this.PAGE_CURRENT);
                 this.getMovies(this.URL_CURRENT, this.PAGE_CURRENT)
             }
-        }        
+        },
+        showPopup() {
+            this.SHOWPOPUP = true  
+            const element = document.querySelector('body');
+            element.classList.add('lock');
+            // console.log(this.FILMID);
+        },
+        closePopup() {
+            this.SHOWPOPUP = false
+            const element = document.querySelector('body');
+            element.classList.remove('lock');
+            // console.log(this.SHOWPOPUP);
+        },  
     },
     beforeMount(){
         this.getMovies(API_URL_TOP_100, 1)
@@ -198,7 +277,10 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
+    body.lock {
+        overflow: hidden;
+    }
     .container {
         padding-top: 30px;
 
@@ -261,6 +343,7 @@ export default {
 
         margin-bottom: 20px;
         position: relative;
+        z-index: 1;
     }
     .card__img {
         min-width: 100%;
@@ -382,7 +465,7 @@ export default {
         align-items: center;
         text-align: center;
     }
-    
+
     .mobile {
         display: none;
         max-width: 200px;

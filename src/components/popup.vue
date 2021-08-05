@@ -29,14 +29,12 @@
                     <p>
                         <span class="popup_body_span"> Рейтинг </span>:&nbsp; {{CURRENT_RATING}}
                     </p>
-                    <p :class="{show: popUp_Data.type == 'FILM', none: popUp_Data.type == 'TV_SHOW' || popUp_Data.type == 'TV_SERIES' }">
+                    <p :class="{show: popUp_Data.type == 'FILM', none: popUp_Data.filmLength == null }">
                         <span class="popup_body_span"> Хронометраж </span>:&nbsp; {{popUp_Data.filmLength}}
                     </p>
-                    <p :class="{show: popUp_Data.type == 'TV_SHOW' || popUp_Data.type == 'TV_SERIES', none: popUp_Data.type == 'FILM' }">
-                        <span class="popup_body_span"> Хронометраж серии </span>:&nbsp; {{popUp_Data.filmLength}}
-                    </p>
 
-                    <div class="popup_body__trailer">
+                    <div class="popup_body__trailer"
+                        :class="{showTrailer: showTrailer == true, noneTrailer: showTrailer == false}">
                         <p> <span class="popup_body_span">Трейлер</span>:&nbsp;&nbsp;  </p>
                         <iframe width="100%" 
                         height="315" 
@@ -68,7 +66,7 @@
 
 <script>
 export default {
-    props: ['SHOWPOPUP', 'popUp_Data', 'FILMID', 'CURRENT_RATING', 'trailersData', 'URL_TRAILER_SIMBOL'],
+    props: ['SHOWPOPUP', 'popUp_Data', 'FILMID', 'CURRENT_RATING', 'trailersData', 'URL_TRAILER_SIMBOL', 'showTrailer'],
 
 }
 </script>
@@ -76,6 +74,12 @@ export default {
 <style scoped>
     p, h3 {
         cursor: default;
+    }
+    .showTrailer {
+        display: flex;
+    }
+    .noneTrailer {
+        display: none;
     }
     .link_watch {
         color: white;
@@ -101,7 +105,7 @@ export default {
         text-align: left;
     }
     .popup_body__trailer {
-        display: flex;
+        /* display: flex; */
         margin-bottom: 20px;
     }
     .popup_body__trailer p {
@@ -123,6 +127,12 @@ export default {
         margin-top: 14px;
     }
     .show {
+        display: block;
+        font-family: 'Lato', sans-serif;
+        font-size: 14px;
+        font-weight: 400;
+    }
+    .shows{
         display: block;
         font-family: 'Lato', sans-serif;
         font-size: 14px;

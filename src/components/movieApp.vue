@@ -57,6 +57,7 @@
             :CURRENT_RATING="CURRENT_RATING"
             :trailersData="trailersData"
             :URL_TRAILER_SIMBOL="URL_TRAILER_SIMBOL"
+            :showTrailer="showTrailer"
         />
 
         <div class="card" 
@@ -159,6 +160,7 @@ export default {
             FILMID: 0,
             CURRENT_RATING: '',
             URL_TRAILER_SIMBOL: '',
+            showTrailer: true,
         }
     },
     components: {
@@ -209,7 +211,7 @@ export default {
             })
             const respData = await resp.json()
             this.popUp_Data = respData.data
-            // console.log(this.popUp_Data.filmLength);
+            console.log(this.popUp_Data.type);
             this.showPopup()
             this.getTrailer(API_URL_TRAILER, id)
         },
@@ -223,19 +225,27 @@ export default {
             })
             const respData = await resp.json()
             this.trailersData = respData.trailers
-            let link = respData.trailers[0].url
-            if (link.length == 43) {
-                link = respData.trailers[0].url
-                link = link.substring(32)
-                this.URL_TRAILER_SIMBOL = link
-                // console.log(this.URL_TRAILER_SIMBOL);
+            // console.log(respData.trailers);
+            if (respData.trailers.length == 0) {
+                // console.log(respData.trailers.length);
+                this.showTrailer = false
             } else {
-                link = link.substring(17)
-                this.URL_TRAILER_SIMBOL = link
-                // console.log(this.URL_TRAILER_SIMBOL);
+                // console.log(respData.trailers.length);
+                let link = respData.trailers[0].url
+                // console.log(respData.trailers);
+                if (link.length == 43) {
+                    link = respData.trailers[0].url
+                    link = link.substring(32)
+                    this.URL_TRAILER_SIMBOL = link
+                    // console.log(this.URL_TRAILER_SIMBOL);
+                } else {
+                    link = link.substring(17)
+                    this.URL_TRAILER_SIMBOL = link
+                    // console.log(this.URL_TRAILER_SIMBOL);
+                }  
             }
             
-            // console.log(respData.trailers);
+            
         },
         nextPage(page) {
             if (page >= this.respPageCount) {

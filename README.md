@@ -1,4 +1,4 @@
-# movie-prj
+# vue3-movie-app-second
 
 ## Project setup
 ```

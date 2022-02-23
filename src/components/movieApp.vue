@@ -1,7 +1,33 @@
 <template>
     <header>
         <div class="header_content">
-            <h1>MoviaApp</h1>
+            <h1> <span class="headerShow">MoviaApp</span> <img src="https://img.icons8.com/office/30/000000/movie-projector.png"/></h1>
+            
+             <div class="btn_change_url_top">
+                <button 
+                    class="btn url_top_100" 
+                    :class="{active: NAME_CATIGORY_NAME_CURRENT == '100'}"
+                    @click="topName = 'ТОП 100', PAGE_CURRENT = 1, NAME_CATIGORY_NAME_CURRENT = '100', getMovies(API_URL_TOP_100, 1)"
+                    >
+                    <!-- isActive = !isActive, noActive = !noActive -->
+                Топ 100
+                </button>
+                <button 
+                    class="btn url_top_250" 
+                    :class="{active: NAME_CATIGORY_NAME_CURRENT == '250'}"
+                    @click="topName = 'ТОП 250', PAGE_CURRENT = 1, NAME_CATIGORY_NAME_CURRENT = '250', getMovies(API_URL_TOP_250, 1)"
+                    >
+                    <!-- isActive = !isActive, noActive = !noActive -->
+                Топ 250
+                </button>
+                <button 
+                    class="btn url_awaits" 
+                    :class="{active: NAME_CATIGORY_NAME_CURRENT == 'await'}"
+                    @click="topName = 'ОЖИДАЕМЫЕ', PAGE_CURRENT = 1, NAME_CATIGORY_NAME_CURRENT = 'await', getMovies(API_URL_AWAIT, 1)"
+                    >
+                Ожидаемые
+                </button>
+            </div>
 
             <input type="text" 
             :placeholder="myPlaceholder" 
@@ -10,34 +36,10 @@
                         searchSave = search, 
                         NAME_CATIGORY_NAME_CURRENT = '', 
                         getMovies(API_URL_SEARCH)">
-        </div>
-    </header>
 
-    <div class="btn_change_url_top">
-        <button 
-            class="btn url_top_100" 
-            :class="{active: NAME_CATIGORY_NAME_CURRENT == '100'}"
-            @click="topName = 'ТОП 100', PAGE_CURRENT = 1, NAME_CATIGORY_NAME_CURRENT = '100', getMovies(API_URL_TOP_100, 1)"
-            >
-            <!-- isActive = !isActive, noActive = !noActive -->
-        Топ 100
-        </button>
-        <button 
-            class="btn url_top_250" 
-            :class="{active: NAME_CATIGORY_NAME_CURRENT == '250'}"
-            @click="topName = 'ТОП 250', PAGE_CURRENT = 1, NAME_CATIGORY_NAME_CURRENT = '250', getMovies(API_URL_TOP_250, 1)"
-            >
-            <!-- isActive = !isActive, noActive = !noActive -->
-        Топ 250
-        </button>
-        <button 
-            class="btn url_awaits" 
-            :class="{active: NAME_CATIGORY_NAME_CURRENT == 'await'}"
-            @click="topName = 'ОЖИДАЕМЫЕ', PAGE_CURRENT = 1, NAME_CATIGORY_NAME_CURRENT = 'await', getMovies(API_URL_AWAIT, 1)"
-            >
-        Ожидаемые
-        </button>
-    </div>
+        </div>
+
+    </header>
 
     
     <h2 class="top_text"
@@ -83,9 +85,9 @@
             </span>
             <p class="card__rating" 
             :class="{
-                green: item.rating >= 7,
-                yellow: item.rating > 5 & item.rating < 7, 
-                red: item.rating < 5
+                green: item.rating >= 7 || item.rating >= '70%',
+                yellow: item.rating > 5 & item.rating < 7 || item.rating > '50%' & item.rating < '70%', 
+                red: item.rating < 5 || item.rating < '50%'
             }">
                 {{item.rating}}
             </p>
@@ -112,7 +114,7 @@
     </div>
     <div class="pagination_box desctop">
         <button 
-        class="btn"
+        class="btn_swipe_page"
         v-for="item of respPageCount"
         :key="item"
         :class='{active: item==PAGE_CURRENT}'
@@ -133,7 +135,7 @@ import {API_URL_AWAIT} from '../data/data.js'
 import {API_URL_SEARCH} from '../data/data.js'
 import {API_URL_TRAILER} from '../data/data.js'
 import {API_URL_SEARCH_MOVIE_ID} from '../data/data.js'
-import popup from './popup.vue'
+import popup from './popupComponents.vue'
 
 export default {
     data() {
@@ -299,6 +301,11 @@ export default {
         flex-wrap: wrap;
     }
 
+    .headerShow {
+        display: auto;
+    }
+
+
     .top_text {
         text-align: left;
         padding-left: 20px;
@@ -309,10 +316,7 @@ export default {
         font-weight: 700;
     }
 
-    .btn_change_url_top {
-        padding-top: 30px;
-    }
-    .btn {
+    .btn_swipe_page {
         display: inline-block;	
         box-sizing: border-box;
         padding: 0 24px;
@@ -334,13 +338,42 @@ export default {
         touch-action: manipulation;  
         transition: box-shadow .18s ease-out,background .18s ease-out,color .18s ease-out;
     }
-    .btn:hover {
+    .btn_swipe_page:hover {
         color: #07bc4c;
         box-shadow: 0 1px 1px 0  #cfcfcf, 0 2px 5px 0  #cfcfcf;
     }
-    .btn.active {
+    .btn_swipe_page.active {
         color: #fff;
         background-color: #07bc4c;
+    }
+
+
+    .btn_change_url_top {
+        width: 250px;
+        display: flex;
+        justify-content: space-between;
+    }
+    .btn {
+        width: fit-content;
+        
+        height: 37px;
+        line-height: 37px;
+        font-size: 14px;
+        text-transform: uppercase;
+        font-weight: normal;
+        text-decoration: none;
+       
+        border: none;
+        background: none;
+
+        color: #C0C0C0;
+    }
+    .btn:hover {
+        color: #FFFFFF;
+    }
+    .btn.active {
+        color: #FFFFFF;
+        border-bottom: 2px solid #FF5C00;
     }
 
     .card {
@@ -356,8 +389,8 @@ export default {
         z-index: 1;
     }
     .card__img {
-        min-width: 100%;
-        max-width: 300px;
+        min-width: 290px;
+        max-width: 290px;
         height: 100%;
     }
     .card__img__inner {
@@ -368,7 +401,7 @@ export default {
         background-color: #000;
         opacity: 0.2;
         position: absolute;
-        min-width: 100%;
+        min-width: 290px;
         height: 100%;
         z-index: 1;
     }
@@ -491,11 +524,31 @@ export default {
         }
     }
     @media (max-width: 768px) {
+        input {
+             width: 50px;       
+        }
+
         .desctop {
             display: none;
         }
         .mobile {
             display: flex;
         }
+        .headerShow {
+            display: none;
+        }
+        
+        .btn_change_url_top {
+            width: 250px;
+            margin-left: 10px;
+            margin-right: 10px;
+            padding-top: 0px;
+        }
+        .btn {
+        height: fit-content;
+        line-height: 17px;
+        font-size: 12px;
+        }
+
     }
 </style>
